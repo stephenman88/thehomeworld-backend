@@ -1,10 +1,20 @@
 from celery import shared_task
+from .models import TcgPlayerSet
+import requests
+import environ
 
-SETNAMESURL = 'https://mpapi.tcgplayer.com/v2/Catalog/SetNames?categoryId=74&mpfev=2638'
+env = environ.Env()
+environ.Env().read_env()
 
-CARDPRICEURL = 'https://infinite-api.tcgplayer.com/priceguide/set/23128/cards/?rows=5000&productTypeID=122'
+TCGPLAYER_SETNAMES_URL = env('TCGPLAYER_SETNAMES_URL')
+CARDPRICEURL = env('TCGPLAYER_CARDPRICE_URL_SAMPLE')
 
 @shared_task
-def refreshSetList():
-    pass
-
+def refreshTcgSetList():
+    response = requests.get(env('TCGPLAYER_SETNAMES_URL'))
+    for set in response.json()['results']:
+        dataObject, isCreated =TcgPlayerSet.objects.update_or_create(
+                setNameId=set['setNameId'],
+                defaults=set
+            )
+        dataObject.save()

@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 import environ
 
+env = environ.Env()
+environ.Env.read_env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -84,7 +87,7 @@ DATABASES = {
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
-        'PORT': env('PORT')
+        'PORT': env('DB_PORT')
     }
 }
 
@@ -133,6 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
-CELERY_IMPORTS = ['webscraper.tasks']
+CELERY_IMPORTS = ['cardprice.tasks']
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
