@@ -1,10 +1,37 @@
 from celery import shared_task
+from .models import TcgPlayerSet, TcgPlayerCard
+import requests
+import environ
 
-SETNAMESURL = 'https://mpapi.tcgplayer.com/v2/Catalog/SetNames?categoryId=74&mpfev=2638'
+env = environ.Env()
+environ.Env().read_env()
 
-CARDPRICEURL = 'https://infinite-api.tcgplayer.com/priceguide/set/23128/cards/?rows=5000&productTypeID=122'
+TCGPLAYER_SETNAMES_URL = env('TCGPLAYER_SETNAMES_URL')
+CARDPRICEURL = env('TCGPLAYER_CARDPRICE_URL_SAMPLE')
 
 @shared_task
-def refreshSetList():
-    pass
+def refreshTcgSetList():
+    response = requests.get(env('TCGPLAYER_SETNAMES_URL'))
+    for set in response.json()['results']:
+        dataObject, isCreated =TcgPlayerSet.objects.update_or_create(
+                setNameId=set['setNameId'],
+                defaults=set
+            )
+        dataObject.save()
 
+@shared_task
+def refreshTcgCardPrice():
+    setList = TcgPlayerSet.objects.all()
+    if len(setList) == 0:
+        refreshTcgSetList()
+    for set in setList:
+        url = env('TCGPLAYER_CARDPRICE_BASE_URL') + str(set.setNameId) + env('TCGPLAYER_CARDPRICE_QUERY')
+        response = requests.get(url)
+        if 'result' in response.json():
+            result = response.json()['result']
+            for card in result:
+                dataObject, isCreated = TcgPlayerCard.objects.update_or_create(
+                    productID=card['productID'],
+                    defaults=card
+                )
+                dataObject.save()
