@@ -1,7 +1,7 @@
 from django.test import TestCase
 from cardprice.tasks import refreshTcgSetList
-from cardprice.models import TcgPlayerSet, TcgPlayerCard
-from .tasks import refreshTcgSetList, refreshTcgCardPrice
+from cardprice.models import TcgPlayerSet, TcgPlayerCard, IndexCard, IndexEdition, IndexSet
+from .tasks import refreshTcgSetList, refreshTcgCardPrice, refreshIndexCard
 import environ
 
 
@@ -44,3 +44,32 @@ class refreshTcgCardPriceCase(TestCase):
         print(type(nico.lowPrice))
         print(nico.marketPrice)
         print(type(nico.marketPrice))
+
+class refreshIndexCardCase(TestCase):
+    def setUp(self):
+        refreshIndexCard()
+
+    def test_spirit_of_water_card(self):
+        spirit_of_water= IndexCard.objects.filter(name="Spirit of Water")
+        print(spirit_of_water[0].name)
+        self.assertEqual(len(spirit_of_water), 1)
+        self.assertListEqual(spirit_of_water[0].types, ["CHAMPION"])
+        self.assertListEqual(spirit_of_water[0].classes, ["SPIRIT"])
+        self.assertListEqual(spirit_of_water[0].subtypes, ["SPIRIT"])
+        self.assertEqual(spirit_of_water[0].effect_raw, "On Enter: Draw seven cards.")
+        print(type(spirit_of_water[0].rule))
+        self.assertEqual(spirit_of_water[0].rule, None)
+        self.assertEqual(spirit_of_water[0].flavor, "Convalescing waves cascade through the soul, revitalizing the body and mind from the depths. ")
+        self.assertEqual(spirit_of_water[0].cost_memory, 0)
+        self.assertEqual(spirit_of_water[0].level, 0)
+        self.assertEqual(spirit_of_water[0].life, 15)
+
+        spirit_of_water_ed = spirit_of_water[0].indexedition_set.all()
+        self.assertEqual(len(spirit_of_water_ed), 6)
+        self.assertEqual(spirit_of_water_ed[5].uuid, 'qocl33ms0k')
+        self.assertEqual(spirit_of_water_ed[0].set.name, 'Alchemical Revolution')
+        print(spirit_of_water_ed[0].set.name)
+        self.assertEqual(spirit_of_water_ed[1].set.name, 'Alchemical Revolution Starter Decks')
+        self.assertEqual(spirit_of_water_ed[2].set.name, 'Dawn of Ashes Alter Edition')
+        self.assertEqual(spirit_of_water_ed[3].set.name, 'Dawn of Ashes First Edition')
+        self.assertEqual(spirit_of_water_ed[4].set.name, 'Dawn of Ashes Starter Decks')
