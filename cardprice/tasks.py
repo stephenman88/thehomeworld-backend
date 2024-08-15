@@ -1,5 +1,5 @@
 from celery import shared_task
-from .models import TcgPlayerSet
+from .models import TcgPlayerSet, TcgPlayerCard
 import requests
 import environ
 
@@ -18,3 +18,20 @@ def refreshTcgSetList():
                 defaults=set
             )
         dataObject.save()
+
+@shared_task
+def refreshTcgCardPrice():
+    setList = TcgPlayerSet.objects.all()
+    if len(setList) == 0:
+        refreshTcgSetList()
+    for set in setList:
+        url = env('TCGPLAYER_CARDPRICE_BASE_URL') + str(set.setNameId) + env('TCGPLAYER_CARDPRICE_QUERY')
+        response = requests.get(url)
+        if 'result' in response.json():
+            result = response.json()['result']
+            for card in result:
+                dataObject, isCreated = TcgPlayerCard.objects.update_or_create(
+                    productID=card['productID'],
+                    defaults=card
+                )
+                dataObject.save()

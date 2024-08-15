@@ -12,8 +12,8 @@ class TcgPlayerSet(models.Model):
     active= models.BooleanField()
 
 class TcgPlayerCard(models.Model):
-    productId= models.IntegerField()
-    productConditionId= models.IntegerField()
+    productID= models.IntegerField()
+    productConditionID= models.IntegerField()
     condition= models.CharField(max_length=255)
     game= models.CharField(max_length=255)
     isSupplemental= models.BooleanField()
@@ -23,7 +23,10 @@ class TcgPlayerCard(models.Model):
     printing= models.CharField(max_length=32)
     productName= models.CharField(max_length=255)
     rarity= models.CharField(max_length=32)
-    sales= models.IntegerField
+    sales= models.IntegerField()
+    set= models.CharField(max_length=128)
+    setAbbrv= models.CharField(max_length=32)
+    type=models.CharField(max_length=32)
     
 class IndexCard(models.Model):
     uuid= models.UUIDField()
