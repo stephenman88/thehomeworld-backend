@@ -18,6 +18,7 @@ def refreshTcgSetList():
                 defaults=set
             )
         dataObject.save()
+    print('TCG Player set list updated')
 
 @shared_task
 def refreshTcgCardPrice():
@@ -33,9 +34,14 @@ def refreshTcgCardPrice():
             for card in result:
                 dataObject, isCreated = TcgPlayerCard.objects.update_or_create(
                     productID=card['productID'],
+                    condition=card['condition'],
+                    number=card['number'],
+                    printing=card['printing'],
+                    setAbbrv=card['setAbbrv'],
                     defaults=card
                 )
                 dataObject.save()
+    print('TCG Player card list updated')
 
 @shared_task
 def refreshIndexCard(page=1):
@@ -139,3 +145,4 @@ def refreshIndexCard(page=1):
                         editionObj.save()
         if('has_more' in response.json() and response.json()['has_more'] == True):
             refreshIndexCard(page+1)
+    print('GA Index Card list updated')

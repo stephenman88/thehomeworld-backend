@@ -89,3 +89,12 @@ class buildMergedCard(TestCase):
         print(mergedCard['editions'][1]['tcg_low_nonfoil'])
         #self.assertEqual(mergedCard['editions'][1]['tcg_low_nonfoil'], 0.15)
         self.assertEqual(mergedCard['editions'][1]['tcg_low_foil'], None)
+
+        mergedCard = buildMergedCardsByName(cardName="Nimue, Cursed Touch")[0]
+        self.assertEqual(mergedCard['name'], "Nimue, Cursed Touch")
+        self.assertEqual(mergedCard['cost_memory'], None)
+        self.assertEqual(mergedCard['cost_reserve'], 2)
+        self.assertEqual(mergedCard['editions'][2]['slug'], 'nimue-cursed-touch-doap-ks')
+        print(mergedCard['editions'][2]['tcg_low_nonfoil'])
+        self.assertEqual(mergedCard['editions'][2]['tcg_low_nonfoil'], 3.45)
+        self.assertEqual(mergedCard['editions'][2]['tcg_low_foil'], 3.67)

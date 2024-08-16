@@ -9,10 +9,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - homeworlddb
+      - my-postgres
       - redis
 
-  homeworlddb:
+  my-postgres:
     image: postgres
     ports:
       - ${DB_PORT}:${DB_PORT}
@@ -42,7 +42,7 @@ services:
     depends_on:
       - redis
       - celery
-      - homeworlddb
+      - my-postgres
     environment:
       - POSTGRES_DB=app
       - POSTGRES_USER=${DB_USER}
