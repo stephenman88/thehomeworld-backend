@@ -18,12 +18,14 @@ def refreshTcgSetList():
                 defaults=set
             )
         dataObject.save()
+    print('TCG Player set list updated')
 
 @shared_task
 def refreshTcgCardPrice():
     setList = TcgPlayerSet.objects.all()
-    if len(setList) == 0:
+    if len(list(setList)) == 0:
         refreshTcgSetList()
+        setList = TcgPlayerSet.objects.all()
     for set in setList:
         url = env('TCGPLAYER_CARDPRICE_BASE_URL') + str(set.setNameId) + env('TCGPLAYER_CARDPRICE_QUERY')
         response = requests.get(url)
@@ -32,20 +34,22 @@ def refreshTcgCardPrice():
             for card in result:
                 dataObject, isCreated = TcgPlayerCard.objects.update_or_create(
                     productID=card['productID'],
+                    condition=card['condition'],
+                    number=card['number'],
+                    printing=card['printing'],
+                    setAbbrv=card['setAbbrv'],
                     defaults=card
                 )
                 dataObject.save()
+    print('TCG Player card list updated')
 
 @shared_task
 def refreshIndexCard(page=1):
     url = env('INDEX_CARD_BASE_URL') + str(page)
-    print(url)
     response = requests.get(url)
-    print(str(response))
     if ('data' in response.json()):
         data = response.json()['data']
         for card in data:
-            print(card['slug'])
             cardObject, isCreated = IndexCard.objects.update_or_create(
                 uuid=card['uuid'],
                 defaults={
@@ -141,3 +145,4 @@ def refreshIndexCard(page=1):
                         editionObj.save()
         if('has_more' in response.json() and response.json()['has_more'] == True):
             refreshIndexCard(page+1)
+    print('GA Index Card list updated')
