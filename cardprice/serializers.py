@@ -19,3 +19,8 @@ class MergedCardSerializer(serializers.Serializer):
     speed= serializers.BooleanField(allow_null=True)
     legality= serializers.JSONField(allow_null=True)
     editions = serializers.JSONField(allow_null=True)
+
+class FullDeckSerializer(serializers.Serializer):
+    mat_deck= serializers.JSONField()
+    main_deck= serializers.JSONField()
+    side_deck= serializers.JSONField()
