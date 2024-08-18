@@ -121,9 +121,9 @@ class FullDeckSearch(APIView):
                 sideDeckString = ""
             sideDeckCardList = buildCardList(sideDeckString)
             fullResponse = {
-                'mat_deck': [matDeckCardList],
-                'main_deck': [mainDeckCardList],
-                'side_deck': [sideDeckCardList]
+                'mat_deck': matDeckCardList,
+                'main_deck': mainDeckCardList,
+                'side_deck': sideDeckCardList
             }
             serializer = FullDeckSerializer(data=fullResponse)
             if serializer.is_valid():
