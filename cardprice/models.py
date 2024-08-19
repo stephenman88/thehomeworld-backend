@@ -1,22 +1,82 @@
 from django.db import models
 
 # Create your models here.
-class tcgPlayerSet:
-    setNameID: models.IntegerField
-    categoryID: models.IntegerField
-    name: models.CharField(max_length=255)
-    cleanSetName: models.CharField(max_length=255)
-    urlName: models.CharField(max_length=255)
-    abbreviation: models.CharField(max_length=255)
-    releaseDate: models.DateTimeField
-    active: models.BooleanField
+class TcgPlayerSet(models.Model):
+    setNameId= models.IntegerField()
+    categoryId= models.IntegerField()
+    name= models.CharField(max_length=255)
+    cleanSetName= models.CharField(max_length=255)
+    urlName= models.CharField(max_length=255)
+    abbreviation= models.CharField(max_length=255)
+    releaseDate= models.DateTimeField(null=True)
+    active= models.BooleanField()
 
-class tcgPlayerCard:
-    productID: models.IntegerField
-    productConditionID: models.IntegerField
-    condition: models.CharField(max_length=255)
-    game: models.CharField(max_length=255)
-    isSupplemental: models.BooleanField
-    lowPrice: models.DecimalField(decimal_places=2)
-    marketPrice: models.DecimalField(decimal_places=2)
+class TcgPlayerCard(models.Model):
+    productID= models.IntegerField()
+    productConditionID= models.IntegerField()
+    condition= models.CharField(max_length=255)
+    game= models.CharField(max_length=255)
+    isSupplemental= models.BooleanField()
+    lowPrice= models.DecimalField(decimal_places=2, max_digits=100)
+    marketPrice= models.DecimalField(decimal_places=2, max_digits=100)
+    number= models.CharField(max_length=16)
+    printing= models.CharField(max_length=32)
+    productName= models.CharField(max_length=255)
+    rarity= models.CharField(max_length=32)
+    sales= models.IntegerField()
+    set= models.CharField(max_length=128)
+    setAbbrv= models.CharField(max_length=32)
+    type=models.CharField(max_length=32)
     
+class IndexCard(models.Model):
+    uuid= models.CharField(max_length=32, unique=True)
+    types= models.JSONField()
+    classes= models.JSONField()
+    subtypes= models.JSONField()
+    element= models.CharField(max_length=128)
+    name= models.CharField(max_length=128)
+    slug= models.CharField(max_length=128)
+    effect= models.TextField(null=True)
+    effect_raw= models.TextField(null=True)
+    rule= models.JSONField(null=True)
+    flavor= models.TextField( null=True)
+    cost_memory= models.IntegerField(null=True)
+    cost_reserve= models.IntegerField(null=True)
+    level= models.IntegerField(null=True)
+    power= models.IntegerField(null=True)
+    life= models.IntegerField(null=True)
+    durability= models.IntegerField(null=True)
+    speed= models.BooleanField(null=True)
+    legality= models.JSONField(null=True)
+    related_ids= models.JSONField(null=True)
+    last_update= models.DateTimeField()
+
+class IndexSet(models.Model):
+    name= models.CharField(max_length=64)
+    prefix= models.CharField(max_length=16)
+    language= models.CharField(max_length=16)
+
+class IndexEdition(models.Model):
+    card=models.ForeignKey(IndexCard, on_delete=models.CASCADE)
+    uuid= models.CharField(max_length=32, unique=True)
+    collector_number= models.CharField(max_length=16)
+    slug= models.CharField(max_length=255)
+    illustrator= models.CharField(max_length=128)
+    rarity= models.IntegerField()
+    effect= models.TextField(null=True)
+    flavor= models.TextField(null=True)
+    thema_grace_nonfoil= models.IntegerField(null=True)
+    thema_valor_nonfoil= models.IntegerField(null=True)
+    thema_charm_nonfoil= models.IntegerField(null=True)
+    thema_mystique_nonfoil = models.IntegerField(null=True)
+    thema_ferocity_nonfoil = models.IntegerField(null=True)
+    thema_grace_foil= models.IntegerField(null=True)
+    thema_valor_foil= models.IntegerField(null=True)
+    thema_charm_foil= models.IntegerField(null=True)
+    thema_mystique_foil = models.IntegerField(null=True)
+    thema_ferocity_foil = models.IntegerField(null=True)
+    thema_foil= models.IntegerField(null=True)
+    thema_nonfoil= models.IntegerField(null=True)
+    circulations= models.JSONField()
+    circulationTemplates= models.JSONField()
+    set= models.ForeignKey(IndexSet, on_delete=models.CASCADE)
