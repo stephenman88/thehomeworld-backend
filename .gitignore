@@ -18,3 +18,11 @@ celerybeat-schedule
 celerybeat.pid
 
 __pycache__/
+
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+staticfiles
