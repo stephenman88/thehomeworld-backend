@@ -1,10 +1,13 @@
 from celery import shared_task
 from .models import TcgPlayerSet, TcgPlayerCard, IndexCard, IndexEdition, IndexSet
 import requests
+import os
+from pathlib import Path
 import environ
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env = environ.Env()
-environ.Env().read_env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 TCGPLAYER_SETNAMES_URL = env('TCGPLAYER_SETNAMES_URL')
 CARDPRICEURL = env('TCGPLAYER_CARDPRICE_URL_SAMPLE')

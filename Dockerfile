@@ -2,7 +2,7 @@
 FROM python:3.10-slim
 
 # Set the working directory in docker
-WORKDIR /app
+WORKDIR /
 
 # Copy the dependencies file to the working directory
 COPY requirements.txt .

@@ -93,6 +93,7 @@ def buildCardList(cardListString):
     returnCardList = []
     for line in lines:
         countAndWord = line.split(' ')
+        print(countAndWord)
         if not re.match('^[0-9]$', countAndWord[0]) and len(countAndWord[0]) > 0:
             return BadDataError("Bad Data Format: Please follow the omnidex format.")
         if re.match('^[0-9]+$', countAndWord[0]):
@@ -121,9 +122,9 @@ class FullDeckSearch(APIView):
                 sideDeckString = ""
             sideDeckCardList = buildCardList(sideDeckString)
             fullResponse = {
-                'mat_deck': [matDeckCardList],
-                'main_deck': [mainDeckCardList],
-                'side_deck': [sideDeckCardList]
+                'mat_deck': matDeckCardList,
+                'main_deck': mainDeckCardList,
+                'side_deck': sideDeckCardList
             }
             serializer = FullDeckSerializer(data=fullResponse)
             if serializer.is_valid():
